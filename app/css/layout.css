@@ -8,9 +8,10 @@
   top: 0;
   z-index: 80;
   background-color: var(--bg-color);
-  padding: 1rem 0;
+  padding: 1rem 20px;
   border-bottom: 1px solid var(--border-color);
-  margin-bottom: 2rem;
+  margin: 0 auto 2rem auto;
+  max-width: 750px;
 }
 
 .nav-left {
