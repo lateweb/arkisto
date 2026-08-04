@@ -1,0 +1,529 @@
+/* style.css */
+
+/* =========================================
+   MUUTTUJAT & TEEMAT (Täysi mustavalkoisuus)
+   ========================================= */
+:root {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    --text-muted: #555555;
+    --border-color: #cccccc;
+}
+
+[data-theme="dark"] {
+    --bg-color: #000000;
+    --text-color: #ffffff;
+    --text-muted: #aaaaaa;
+    --border-color: #444444;
+}
+
+/* =========================================
+   PERUSTYYLIT
+   ========================================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Open Sans', sans-serif;
+    line-height: 1.6;
+    font-size: 16px;
+    transition: background-color 0.1s;
+    overflow-x: hidden;
+}
+
+a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+a:hover {
+    text-decoration-thickness: 2px;
+}
+
+/* =========================================
+   YHTEISET (NAVIGOINTI)
+   ========================================= */
+.top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 80;
+    background-color: var(--bg-color);
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+}
+
+/* Ei enää body.has-hamburger .top-nav -sääntöä, koska
+   Takaisin-nuolen sijainti hoidetaan .nav-leftin marginaalilla. */
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    /* Raivaa tilaa hampurilaisnapille kapeilla näytöillä */
+    margin-left: 46px;
+}
+
+/* Näytön leveys 750–841 px: marginaali pienenee lineaarisesti */
+@media (min-width: 750px) and (max-width: 841px) {
+    .nav-left {
+        margin-left: calc(46px - (100vw - 750px) / 2);
+    }
+}
+
+/* Leveys ≥ 842 px: marginaali poistuu, nuoli palautuu
+   article-wrapperin vasempaan reunaan (20 px). */
+@media (min-width: 842px) {
+    .nav-left {
+        margin-left: 0;
+    }
+}
+
+/* Pysyvä sivupaneelin navigaationappi */
+.nav-toggle-btn {
+    position: fixed;
+    top: 1.1rem;
+    left: 1.5rem;
+    z-index: 1001;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.4rem 0.5rem;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.nav-toggle-btn:hover {
+    background-color: var(--border-color);
+}
+
+.site-back-link {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    display: inline-block;
+}
+
+.site-back-link:hover {
+    color: var(--text-color);
+    text-decoration: underline;
+}
+
+.icon-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-btn:hover {
+    color: var(--text-color);
+}
+
+/* =========================================
+   ETUSIVU (INDEX.HTML)
+   ========================================= */
+.container {
+    max-width: 750px;
+    margin: 0 auto;       /* poistettu ylämarginaali – top‑bar nyt samalla korkeudella kuin article.html */
+    padding: 0 20px 40px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: normal;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.search-container {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+input[type="text"] {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+    font-family: inherit;
+    font-style: italic;
+    padding: 8px 12px;
+    width: 100%;
+    max-width: 300px;
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-bottom: 1px solid var(--text-color);
+}
+
+.shelf {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.no-results {
+    text-align: center;
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 2rem 0;
+}
+
+/* Artikkelikortti / linkki */
+.entry {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    padding: 20px;
+    border: 1px solid transparent;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.entry:hover {
+    border: 1px solid var(--text-color);
+    text-decoration: none;
+}
+
+.entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.entry-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.entry:hover .entry-title {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 2px;
+}
+
+.entry-date {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.entry-desc {
+    font-size: 1.05rem;
+    margin-bottom: 1rem;
+}
+
+.entry-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.tag {
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.entry:hover .tag {
+    border-color: var(--text-color);
+    color: var(--text-color);
+}
+
+/* =========================================
+   ARTIKKELIN LUKUNÄKYMÄ (ARTICLE.HTML)
+   ========================================= */
+.article-wrapper {
+    max-width: 750px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+}
+
+.article-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.article-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.article-author {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.article-date {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.abstract {
+    margin: 2rem 0 3rem;
+    padding: 1.5rem 2rem;
+    border: 1px solid var(--border-color);
+}
+
+.article-content {
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+.article-content p {
+    margin-bottom: 1.5rem;
+}
+
+.article-content h2 {
+    font-size: 1.5rem;
+    margin: 3rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+}
+
+.article-content h3 {
+    font-size: 1.25rem;
+    margin: 2rem 0 1rem;
+    font-weight: 600;
+}
+
+.article-content ul,
+.article-content ol {
+    margin: 0 0 1.5rem 2rem;
+}
+
+.article-content li {
+    margin-bottom: 0.5rem;
+}
+
+.article-content strong {
+    font-weight: 700;
+}
+
+.article-content code {
+    font-family: 'Courier New', Courier, monospace;
+    padding: 0.1em 0.3em;
+    border: 1px solid var(--border-color);
+    font-size: 0.9em;
+}
+
+.article-content pre {
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+}
+
+.article-content pre code {
+    border: none;
+    padding: 0;
+}
+
+.article-content blockquote {
+    margin: 1.5rem 0;
+    padding: 1rem 1.5rem;
+    border-left: 3px solid var(--text-color);
+    color: var(--text-muted);
+}
+
+.article-content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 2rem auto;
+    border: 1px solid var(--border-color);
+}
+
+.article-content table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 2rem 0;
+}
+
+.article-content th,
+.article-content td {
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1rem;
+    text-align: left;
+}
+
+.article-content th {
+    font-weight: 700;
+    border-bottom: 2px solid var(--text-color);
+}
+
+/* =========================================
+   MATHJAX 4 OVERRIDES
+   ========================================= */
+mjx-container {
+    display: inline-block !important;
+    white-space: nowrap !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: inherit !important;
+    font-size: inherit !important; 
+    width: auto !important;
+    max-width: 100% !important;
+}
+
+.math-inline mjx-container,
+.math-inline mjx-container mjx-math {
+    display: inline !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+}
+
+.math-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-width: 100%;
+    margin: 1em 0;
+    white-space: nowrap !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+}
+
+.math-display mjx-container {
+    white-space: nowrap !important;
+    display: inline-block !important;
+    min-width: 100%;
+}
+
+mjx-assistive-mml {
+    display: none !important;
+}
+
+/* =========================================
+   SIVUPANEELIT (Sidebar: TOC & Bib)
+   ========================================= */
+.sidebar {
+    position: fixed;
+    top: 0; bottom: 0;
+    width: 320px;
+    max-width: 90vw;
+    background: var(--bg-color);
+    z-index: 100;
+    overflow-y: auto;
+    padding: 2rem;
+    transition: transform 0.2s ease-in-out;
+}
+
+.left-sidebar {
+    left: 0;
+    border-right: 1px solid var(--border-color);
+    transform: translateX(-100%);
+    padding-top: 4.5rem; /* Tilaa kiinteälle napille */
+}
+.left-sidebar.open {
+    transform: translateX(0);
+}
+
+.right-sidebar {
+    right: 0;
+    border-left: 1px solid var(--border-color);
+    transform: translateX(100%);
+}
+.right-sidebar.open {
+    transform: translateX(0);
+}
+
+.sidebar-header-row {
+    display: flex;
+    justify-content: flex-end;  /* Tyhjennetty oikealle, koska otsikko poistettu */
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 0.5rem;
+    /* border-bottom poistettu */
+}
+
+/* Poistetaan otsikon tyyli, koska sitä ei enää ole */
+.sidebar-title {
+    display: none;
+}
+
+.toc-empty {
+    font-style: italic;
+    color: var(--text-muted);
+}
+
+/* TOC Lista tyylit */
+.toc-list {
+    list-style: none;
+    padding-left: 0;
+}
+.toc-item {
+    margin-bottom: 0.5rem;
+}
+.toc-link {
+    text-decoration: none;
+    color: var(--text-color);
+    display: block;
+    line-height: 1.4;
+}
+.toc-h2 { margin-left: 0; font-weight: 600; margin-top: 1rem; }
+.toc-h3 { margin-left: 1rem; font-size: 0.95em; color: var(--text-muted); }
+.toc-h4 { margin-left: 2rem; font-size: 0.9em; color: var(--text-muted); }
+
+/* Bib Lista tyylit paneelissa */
+.bib-list {
+    list-style: none;
+    padding-left: 0;
+}
+.bib-list li {
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    padding: 0.5rem;
+    transition: background-color 0.15s;
+}
+
+.highlight-bib {
+    background-color: var(--border-color);
+}
+
+/* =========================================
+   MEDIA QUERIES
+   ========================================= */
+.icon-btn {
+    display: flex;
+}
