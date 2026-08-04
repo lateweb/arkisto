@@ -1,0 +1,23 @@
+/* app/css/article.css */
+/* Additional article‑only overrides or special styles */
+
+.has-hamburger .navbar {
+  padding-left: 60px; /* Make room for the fixed toggle button */
+}
+
+@media (max-width: 600px) {
+  .has-hamburger .navbar {
+    padding-left: 50px;
+  }
+}
+
+/* MathJax inline/display spacing */
+.article-content mjx-container {
+  display: inline-block;
+  margin: 0.1em 0;
+}
+.article-content mjx-container[display="true"] {
+  display: block;
+  margin: 0.8em 0;
+  text-align: center;
+}
