@@ -13,14 +13,23 @@
   margin-bottom: 2rem;
 }
 
-body.has-hamburger .top-nav {
-  padding-left: 4.5rem;
-}
-
 .nav-left {
   display: flex;
   align-items: center;
   gap: 15px;
+  margin-left: 46px;
+}
+
+@media (min-width: 750px) and (max-width: 841px) {
+  .nav-left {
+    margin-left: calc(46px - (100vw - 750px) / 2);
+  }
+}
+
+@media (min-width: 842px) {
+  .nav-left {
+    margin-left: 0;
+  }
 }
 
 .nav-right {
@@ -81,7 +90,7 @@ body.has-hamburger .top-nav {
 /* ETUSIVU (INDEX.HTML) */
 .container {
   max-width: 750px;
-  margin: 2rem auto;
+  margin: 0 auto;
   padding: 0 20px 40px;
 }
 
@@ -146,7 +155,8 @@ input[type="text"]:focus {
 /* SIVUPANEELIT (Sidebar: TOC & Bib) */
 .sidebar {
   position: fixed;
-  top: 0; bottom: 0;
+  top: 0;
+  bottom: 0;
   width: 320px;
   max-width: 90vw;
   background: var(--bg-color);
