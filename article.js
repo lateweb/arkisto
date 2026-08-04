@@ -171,6 +171,47 @@ function formatBibEntry(entry) {
 
 /* ---------- LaTeX → HTML – Harvard/APA citations ---------- */
 function latexToHTML(source, bibEntries) {
+    
+    // -- 0. METADATAN POIMINTA --
+    function extractTexMacro(src, macroName) {
+        const regex = new RegExp('\\\\' + macroName + '\\s*\\{');
+        const match = src.match(regex);
+        if (!match) return '';
+        let start = match.index + match[0].length;
+        let depth = 1;
+        let i = start;
+        while (i < src.length && depth > 0) {
+            if (src[i] === '\\') {
+                i += 2;
+                continue;
+            }
+            if (src[i] === '{') depth++;
+            else if (src[i] === '}') depth--;
+            i++;
+        }
+        return src.substring(start, i - 1).trim();
+    }
+
+    function cleanMetadata(text) {
+        let clean = text.replace(/\\(?:textbf|textit|emph|underline)\{([^}]+)\}/g, '$1');
+        let prev;
+        do {
+            prev = clean;
+            clean = clean.replace(/\\[a-zA-Z]+\*?(?:\s*\[[^\]]*\])*(?:\s*\{[^{}]*\})*/g, '');
+        } while (clean !== prev);
+        clean = clean.replace(/\\([^a-zA-Z0-9])/g, '$1');
+        return clean.trim();
+    }
+
+    let tempSrc = source.replace(/\\%/g, '___PCT___').replace(/%.*/g, '').replace(/___PCT___/g, '\\%');
+    let title = cleanMetadata(extractTexMacro(tempSrc, 'title'));
+    let author = cleanMetadata(extractTexMacro(tempSrc, 'author'));
+    let date = cleanMetadata(extractTexMacro(tempSrc, 'date'));
+
+    title = title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    author = author.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    date = date.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
     let html = source;
     
     // 1. Suojataan matematiikka
@@ -189,7 +230,7 @@ function latexToHTML(source, bibEntries) {
         return `___MATH_${mathStore.length - 1}___`;
     });
 
-    // 2. Suojataan erikoismerkit
+    // 2. Suojataan yleiset LaTeX-erikoismerkit
     html = html.replace(/\\&/g, '___ESC_AMP___');
     html = html.replace(/\\%/g, '___ESC_PCT___');
     html = html.replace(/\\\$/g, '___ESC_DOLLAR___');
@@ -204,39 +245,43 @@ function latexToHTML(source, bibEntries) {
     // 4. HTML-escape
     html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     
-    // 5. Typografia
+    // 5. Typografia & Lainausmerkit
     html = html.replace(/---/g, '—');
     html = html.replace(/--/g, '–');
-    html = html.replace(/``/g, '”');
+    html = html.replace(/``/g, '“');
     html = html.replace(/''/g, '”');
     
-    // 6. Metadatan poiminta
-    const titleMatch = html.match(/\\title\{([^}]+)\}/);
-    const authorMatch = html.match(/\\author\{([^}]+)\}/);
-    const dateMatch = html.match(/\\date\{([^}]+)\}/);
-    let title = titleMatch ? titleMatch[1] : '';
-    let author = authorMatch ? authorMatch[1] : '';
-    let date = dateMatch ? dateMatch[1] : '';
-    
-    // 7. Preamble-ohitus
+    // 6. Preamble-ohitus
     const beginDoc = html.indexOf('\\begin{document}');
     const endDoc = html.indexOf('\\end{document}');
     if (beginDoc !== -1 && endDoc !== -1 && endDoc > beginDoc) {
         html = html.substring(beginDoc + '\\begin{document}'.length, endDoc);
-    } else {
-        html = html.replace(/\\title\{[^}]*\}/g, '');
-        html = html.replace(/\\author\{[^}]*\}/g, '');
-        html = html.replace(/\\date\{[^}]*\}/g, '');
-        html = html.replace(/\\maketitle/g, '');
     }
 
-    // 8. Perus LaTeX-muunnokset
+    // 7. LaTeX-rakenteet (Otsikoiden automaattinumerointi)
     html = html.replace(/\\begin\{abstract\}([\s\S]*?)\\end\{abstract\}/g, (_, content) => {
         return `<div class="abstract">${content.trim()}</div>`;
     });
-    html = html.replace(/\\section\*?\{([^}]+)\}/g, '<h2>$1</h2>');
-    html = html.replace(/\\subsection\*?\{([^}]+)\}/g, '<h3>$1</h3>');
-    html = html.replace(/\\subsubsection\*?\{([^}]+)\}/g, '<h4>$1</h4>');
+
+    let secNum = 0, subsecNum = 0, subsubsecNum = 0;
+    html = html.replace(/\\(section|subsection|subsubsection)(\*?)\{([^}]+)\}/g, (match, level, star, titleContent) => {
+        let numStr = "";
+        if (!star) {
+            if (level === 'section') {
+                secNum++; subsecNum = 0; subsubsecNum = 0;
+                numStr = `${secNum}. `;
+            } else if (level === 'subsection') {
+                subsecNum++; subsubsecNum = 0;
+                numStr = `${secNum}.${subsecNum}. `;
+            } else if (level === 'subsubsection') {
+                subsubsecNum++;
+                numStr = `${secNum}.${subsecNum}.${subsubsecNum}. `;
+            }
+        }
+        const tag = level === 'section' ? 'h2' : (level === 'subsection' ? 'h3' : 'h4');
+        return `<${tag}>${numStr}${titleContent}</${tag}>`;
+    });
+
     html = html.replace(/\\textbf\{([^}]+)\}/g, '<strong>$1</strong>');
     html = html.replace(/\\textit\{([^}]+)\}/g, '<em>$1</em>');
     html = html.replace(/\\emph\{([^}]+)\}/g, '<em>$1</em>');
@@ -246,11 +291,11 @@ function latexToHTML(source, bibEntries) {
     html = html.replace(/\\href\{([^}]+)\}\{([^}]+)\}/g, '<a href="$1" target="_blank" rel="noopener">$2</a>');
     
     html = html.replace(/\\begin\{itemize\}([\s\S]*?)\\end\{itemize\}/g, (_, content) => {
-        const items = content.replace(/\\item\s+/g, '</li><li>');
+        const items = content.replace(/\\item(?:\[[^\]]*\])?\s*/g, '</li><li>');
         return `<ul><li>${items}</li></ul>`;
     });
     html = html.replace(/\\begin\{enumerate\}([\s\S]*?)\\end\{enumerate\}/g, (_, content) => {
-        const items = content.replace(/\\item\s+/g, '</li><li>');
+        const items = content.replace(/\\item(?:\[[^\]]*\])?\s*/g, '</li><li>');
         return `<ol><li>${items}</li></ol>`;
     });
     html = html.replace(/<li>\s*<\/li>/g, '');
@@ -258,7 +303,6 @@ function latexToHTML(source, bibEntries) {
     
     html = html.replace(/\\begin\{quote\}([\s\S]*?)\\end\{quote\}/g, '<blockquote>$1</blockquote>');
     
-    // Taulukot
     html = html.replace(/\\begin\{tabular\}\{([^}]*)\}([\s\S]*?)\\end\{tabular\}/g, (_, colSpec, content) => {
         const rows = content.trim().split('\\\\').filter(row => row.trim() !== '' && !row.includes('\\hline'));
         let table = '<table>';
@@ -332,17 +376,21 @@ function latexToHTML(source, bibEntries) {
         return `[${keys}]`;
     }
 
-    // Käsitellään kaikki cite‑komennot
     html = html.replace(/\\(?:pcite|parencite)\{([^}]+)\}/g, (_, keys) => makeCite(keys, 'paren'));
     html = html.replace(/\\(?:tcite|textcite)\{([^}]+)\}/g, (_, keys) => makeCite(keys, 'text'));
     html = html.replace(/\\cite\{([^}]+)\}/g, (_, keys) => makeCite(keys, 'paren'));
-    // ------------------------------------------------------------
-
-    // 9. Poistetaan tuntemattomat komennot
-    html = html.replace(/\\[a-zA-Z]+\{[^}]*\}/g, '');
-    html = html.replace(/\\[a-zA-Z]+/g, '');
     
-    // 10. Kappale-jäsennys
+    // 8. Tuntemattomat komennot pois
+    html = html.replace(/\\\\/g, '<br>');
+    let prevHtml;
+    do {
+        prevHtml = html;
+        html = html.replace(/\\[a-zA-Z]+\*?(?:\s*\[[^\]]*\])*(?:\s*\{[^{}]*\})*/g, '');
+    } while (html !== prevHtml);
+    
+    html = html.replace(/\\([^a-zA-Z0-9])/g, '$1');
+
+    // 9. Kappale-jäsennys
     const paragraphs = html.split(/\n\s*\n/);
     html = paragraphs.map(para => {
         let trimmed = para.trim();
@@ -354,7 +402,7 @@ function latexToHTML(source, bibEntries) {
         return `<p>${trimmed}</p>`;
     }).join('\n');
     
-    // 11. Palautetaan matematiikka
+    // 10. Palautetaan matematiikka
     html = html.replace(/___MATH_(\d+)___/g, (_, index) => {
         let math = mathStore[index];
         math = math.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -364,7 +412,7 @@ function latexToHTML(source, bibEntries) {
         return `<span class="math-inline">${math}</span>`;
     });
 
-    // 12. Palautetaan erikoismerkit
+    // 11. Palautetaan erikoismerkit
     html = html.replace(/___ESC_AMP___/g, '&amp;');
     html = html.replace(/___ESC_PCT___/g, '%');
     html = html.replace(/___ESC_DOLLAR___/g, '$');
@@ -373,7 +421,7 @@ function latexToHTML(source, bibEntries) {
     html = html.replace(/___ESC_LBRACE___/g, '{');
     html = html.replace(/___ESC_RBRACE___/g, '}');
 
-    // 13. Artikkelin otsikkotiedot
+    // 12. Artikkelin otsikkotiedot
     let headerHTML = '';
     if (title || author || date) {
         headerHTML += '<div class="article-header">';
@@ -396,15 +444,12 @@ function renderBibliography(entries) {
         return;
     }
 
-    // Apufunktio aakkostusavaimen muodostamiseksi (sukunimi)
     function getSortKey(entry) {
         let author = entry.fields.author || '';
-        // Ota ensimmäinen kirjoittaja
         let firstAuthor = author.split(/\s+(?:and|\\and)\s+/i)[0].trim();
         if (!firstAuthor) {
-            return entry.key.toLowerCase(); // vara-avain
+            return entry.key.toLowerCase();
         }
-        // Sukunimi: pilkkuerottelussa ennen pilkkua, muuten viimeinen sana
         let lastName = firstAuthor;
         if (firstAuthor.includes(',')) {
             lastName = firstAuthor.split(',')[0].trim();
@@ -415,7 +460,6 @@ function renderBibliography(entries) {
         return lastName.toLowerCase();
     }
 
-    // Aakkostetaan viitteet sukunimen mukaan
     const sorted = [...entries].sort((a, b) => {
         const keyA = getSortKey(a);
         const keyB = getSortKey(b);
@@ -464,7 +508,6 @@ async function loadArticle() {
         return;
     }
     
-    // Tarkistetaan, että tiedosto on .tex – muuten ilmoitetaan virhe
     if (!texFile.endsWith('.tex')) {
         container.innerHTML = '<p>Virhe: vain LaTeX-tiedostot (.tex) ovat tuettuja.</p>';
         return;
