@@ -1,58 +1,42 @@
 /* app/css/base.css */
 :root {
-  color-scheme: light;
-  --bg: #ffffff;
-  --surface: #ffffff;
-  --surface-muted: #f5f5f5;
-  --border-color: #000000;
-  --text: #000000;
+  --bg-color: #ffffff;
+  --text-color: #000000;
   --text-muted: #555555;
-  --accent: #000000;
-  --font-sans: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --font-mono: 'Fira Code', 'JetBrains Mono', Consolas, monospace;
+  --border-color: #cccccc;
 }
 
+[data-theme="dark"],
 html.dark,
 body.dark {
-  color-scheme: dark;
-  --bg: #000000;
-  --surface: #000000;
-  --surface-muted: #111111;
-  --border-color: #ffffff;
-  --text: #ffffff;
+  --bg-color: #000000;
+  --text-color: #ffffff;
   --text-muted: #aaaaaa;
-  --accent: #ffffff;
+  --border-color: #444444;
 }
 
-html.dark {
-  color-scheme: dark;
-}
-
-html.dark,
-html.dark body {
-  background-color: #000000 !important;
-  color: #ffffff !important;
-}
-
-*,
-*::before,
-*::after {
+* {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html,
 body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Open Sans', sans-serif;
+  line-height: 1.6;
+  font-size: 16px;
+  transition: background-color 0.1s;
   overflow-x: hidden;
-  width: 100%;
 }
 
-body {
-  font-family: var(--font-sans);
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  line-height: 1.6;
-  font-size: 15px;
+a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
 }
