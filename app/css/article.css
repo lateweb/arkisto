@@ -1,23 +1,157 @@
 /* app/css/article.css */
-/* Additional article‑only overrides or special styles */
-
-.has-hamburger .navbar {
-  padding-left: 60px; /* Make room for the fixed toggle button */
-}
-
-@media (max-width: 600px) {
-  .has-hamburger .navbar {
-    padding-left: 50px;
-  }
-}
-
-/* MathJax inline/display spacing */
-.article-content mjx-container {
-  display: inline-block;
-  margin: 0.1em 0;
-}
-.article-content mjx-container[display="true"] {
-  display: block;
-  margin: 0.8em 0;
+.article-header {
   text-align: center;
+  margin-bottom: 3rem;
+}
+
+.article-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.article-author {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.article-date {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.abstract {
+  margin: 2rem 0 3rem;
+  padding: 1.5rem 2rem;
+  border: 1px solid var(--border-color);
+}
+
+.article-content {
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.article-content p {
+  margin-bottom: 1.5rem;
+}
+
+.article-content h2 {
+  font-size: 1.5rem;
+  margin: 3rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+  font-weight: 600;
+}
+
+.article-content h3 {
+  font-size: 1.25rem;
+  margin: 2rem 0 1rem;
+  font-weight: 600;
+}
+
+.article-content ul,
+.article-content ol {
+  margin: 0 0 1.5rem 2rem;
+}
+
+.article-content li {
+  margin-bottom: 0.5rem;
+}
+
+.article-content strong {
+  font-weight: 700;
+}
+
+.article-content code {
+  font-family: 'Courier New', Courier, monospace;
+  padding: 0.1em 0.3em;
+  border: 1px solid var(--border-color);
+  font-size: 0.9em;
+}
+
+.article-content pre {
+  border: 1px solid var(--border-color);
+  padding: 1.5rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.article-content pre code {
+  border: none;
+  padding: 0;
+}
+
+.article-content blockquote {
+  margin: 1.5rem 0;
+  padding: 1rem 1.5rem;
+  border-left: 3px solid var(--text-color);
+  color: var(--text-muted);
+}
+
+.article-content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 2rem auto;
+  border: 1px solid var(--border-color);
+}
+
+.article-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 2rem 0;
+}
+
+.article-content th,
+.article-content td {
+  border: 1px solid var(--border-color);
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.article-content th {
+  font-weight: 700;
+  border-bottom: 2px solid var(--text-color);
+}
+
+/* MATHJAX 4 OVERRIDES */
+mjx-container {
+  display: inline-block !important;
+  white-space: nowrap !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: inherit !important;
+  font-size: inherit !important;
+  width: auto !important;
+  max-width: 100% !important;
+}
+
+.math-inline mjx-container,
+.math-inline mjx-container mjx-math {
+  display: inline !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+.math-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  margin: 1em 0;
+  white-space: nowrap !important;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.math-display mjx-container {
+  white-space: nowrap !important;
+  display: inline-block !important;
+  min-width: 100%;
+}
+
+mjx-assistive-mml {
+  display: none !important;
 }
